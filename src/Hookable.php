@@ -26,7 +26,8 @@ trait Hookable
      */
     public static function hook($method, Closure $hook)
     {
-        static::$hooks[$method][] = $hook;
+        $class = get_called_class();
+        static::$hooks[$class][$method][] = $hook;
     }
 
     /**
@@ -36,7 +37,8 @@ trait Hookable
      */
     public static function flushHooks()
     {
-        static::$hooks = [];
+        $class = get_called_class();
+        static::$hooks[$class] = [];
     }
 
     /**
@@ -253,7 +255,9 @@ trait Hookable
      */
     protected function boundHooks($method)
     {
-        $hooks = isset(static::$hooks[$method]) ? static::$hooks[$method] : [];
+        $class = get_called_class();
+
+        $hooks = array_get(static::$hooks, $class . '.' . $method, []);
 
         return array_map(function ($hook) {
             return $hook->bindTo($this, get_class($this));
