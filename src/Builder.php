@@ -50,7 +50,7 @@ class Builder extends EloquentBuilder
      */
     public function callParent($method, array $args)
     {
-        return call_user_func_array("parent::{$method}", $args);
+        return parent::$method(...$args);
     }
 
     /**
@@ -546,5 +546,10 @@ class Builder extends EloquentBuilder
     public function newQuery()
     {
         return $this->model->newQueryWithoutScopes();
+    }
+
+    public function __call($method, $parameters)
+    {
+        return $this->callParent($method, $parameters);
     }
 }
